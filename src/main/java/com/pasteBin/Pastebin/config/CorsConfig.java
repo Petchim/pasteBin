@@ -12,7 +12,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000")
+                        .allowedOrigins("https://paste-bin-zeta-five.vercel.app/")
 //                        .allowedOrigins("https://as2wice-o7jv.vercel.app/")
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowedHeaders("*");
