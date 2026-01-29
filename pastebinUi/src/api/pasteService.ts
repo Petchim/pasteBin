@@ -9,6 +9,7 @@ import { CreatePasteRequest, CreatePasteResponse, PasteResponse } from './types'
 // Create an Axios instance with base configuration
 const apiClient = axios.create({
     baseURL: import.meta.env.VITE_BACKEND_URL,
+    // baseURL: "http://localhost:8080",
     headers: { 'Content-Type': 'application/json' },
     timeout: 10000,
 });
@@ -61,4 +62,11 @@ export const getPaste = async (id: string): Promise<PasteResponse> => {
         }
         throw new Error('An unexpected error occurred');
     }
+};
+/**
+ * Check if the server is healthy (used for cold start detection)
+ * @returns Promise that resolves if the server is healthy
+ */
+export const checkServerHealth = async (): Promise<void> => {
+    await apiClient.get('/paste-bin/v1/health');
 };

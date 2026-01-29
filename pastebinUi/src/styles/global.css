@@ -107,8 +107,8 @@ code, pre {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  color: white;
+  background: rgba(47, 255, 137, 0.916);
+  color: rgb(11, 0, 0);
   box-shadow: var(--shadow-md);
 }
 

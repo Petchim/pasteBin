@@ -176,4 +176,19 @@ public class PasteController {
     }
 
 
+    @Operation(
+            summary = "Health check",
+            description = "This API is used to check if the server is up and running"
+    )
+    @GetMapping(value = "/health", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseResource<String>> healthCheck() {
+        return ResponseEntity.ok(
+                new ResponseResource<>(
+                        "Server is up and running",
+                        ResponseResource.RESPONSE_CODE_OK,
+                        ResponseResource.STATUS_SUCCESS,
+                        "OK"
+                )
+        );
+    }
 }

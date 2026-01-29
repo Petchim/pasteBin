@@ -39,7 +39,7 @@ const Layout = ({ children }: LayoutProps) => {
 
             {/* Footer */}
             <footer className="footer">
-                <p>Built with React + TypeScript + Vite</p>
+                <p>@Designed and Developed by Petchimuthu</p>
             </footer>
         </div>
     );
