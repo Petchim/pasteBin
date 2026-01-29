@@ -7,16 +7,21 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class CorsConfig {
+
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
+
                 registry.addMapping("/**")
-                        .allowedOrigins("https://paste-bin-zeta-five.vercel.app") // remove trailing slash
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedOrigins(
+                            "https://paste-bin-zeta-five.vercel.app",
+                            "http://localhost:3000"
+                        )
+                        .allowedMethods("GET","POST","PUT","DELETE","OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(true); // allow cookies/auth if needed
+                        .allowCredentials(true);
             }
         };
     }
