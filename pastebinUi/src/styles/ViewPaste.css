@@ -59,6 +59,22 @@
     border: 1px solid #fcd34d;
 }
 
+.badge-expires-urgent {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
+    animation: pulse-urgent 2s ease-in-out infinite;
+}
+
+@keyframes pulse-urgent {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
 /* Paste Content */
 .paste-content {
     background-color: var(--bg-tertiary);

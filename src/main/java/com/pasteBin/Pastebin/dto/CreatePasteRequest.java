@@ -1,12 +1,16 @@
 package com.pasteBin.Pastebin.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 
 public class CreatePasteRequest {
     @NotBlank
     private String content;
 
+    @JsonProperty("expires_in_seconds")
     private Integer ttl_seconds;
+    
+    @JsonProperty("max_views")
     private Integer max_views;
 
     public String getContent() {

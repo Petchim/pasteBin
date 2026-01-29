@@ -10,6 +10,61 @@ import { PasteData } from '../api/types';
 import Toast, { ToastType } from '../components/Toast';
 import '../styles/ViewPaste.css';
 
+/**
+ * Custom hook for countdown timer
+ * Calculates time remaining until expiry and updates every second
+ */
+const useCountdown = (expiresAt: string | null) => {
+    const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
+    const [isExpired, setIsExpired] = useState(false);
+
+    useEffect(() => {
+        if (!expiresAt) {
+            setTimeRemaining(null);
+            return;
+        }
+
+        const calculateTimeRemaining = () => {
+            const now = new Date().getTime();
+            const expiry = new Date(expiresAt).getTime();
+            const remaining = expiry - now;
+
+            if (remaining <= 0) {
+                setTimeRemaining(0);
+                setIsExpired(true);
+            } else {
+                setTimeRemaining(remaining);
+                setIsExpired(false);
+            }
+        };
+
+        // Calculate immediately
+        calculateTimeRemaining();
+
+        // Update every second
+        const interval = setInterval(calculateTimeRemaining, 1000);
+
+        return () => clearInterval(interval);
+    }, [expiresAt]);
+
+    return { timeRemaining, isExpired };
+};
+
+/**
+ * Format milliseconds to HH:MM:SS or MM:SS
+ */
+const formatCountdown = (ms: number): string => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    if (hours > 0) {
+        return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+};
+
 const ViewPaste = () => {
     // Get paste ID from URL
     const { id } = useParams<{ id: string }>();
@@ -25,6 +80,9 @@ const ViewPaste = () => {
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
     const [toastType, setToastType] = useState<ToastType>('success');
+
+    // Countdown timer
+    const { timeRemaining, isExpired } = useCountdown(paste?.expires_at || null);
 
     /**
      * Fetch paste data when component mounts or ID changes
@@ -118,15 +176,17 @@ const ViewPaste = () => {
         );
     }
 
-    // 404 Error state - Clean design without raw backend message
-    if (is404 || error) {
+    // 404 Error state or Expired state - Clean design without raw backend message
+    if (is404 || error || isExpired) {
         return (
             <div className="view-paste-container">
                 <div className="error-404-card">
-                    <div className="error-404-icon">404</div>
-                    <h2 className="error-404-title">Paste Not Found</h2>
+                    <div className="error-404-icon">{isExpired ? '⏰' : '404'}</div>
+                    <h2 className="error-404-title">{isExpired ? 'Paste Expired' : 'Paste Not Found'}</h2>
                     <p className="error-404-text">
-                        This paste doesn't exist or has expired.
+                        {isExpired
+                            ? 'This paste has expired and is no longer available.'
+                            : 'This paste doesn\'t exist or has expired.'}
                     </p>
                     <div className="error-404-actions">
                         <button onClick={handleCreateNew} className="btn btn-primary">
@@ -151,7 +211,15 @@ const ViewPaste = () => {
                                 👁 {paste.remaining_views} views remaining
                             </span>
                         )}
-                        {paste?.expires_at && (
+                        {paste?.expires_at && timeRemaining !== null && (
+                            <span
+                                className={`badge badge-expires ${timeRemaining < 60000 ? 'badge-expires-urgent' : ''
+                                    }`}
+                            >
+                                ⏰ Expires in: {formatCountdown(timeRemaining)}
+                            </span>
+                        )}
+                        {paste?.expires_at && timeRemaining === null && (
                             <span className="badge badge-expires">
                                 ⏰ Expires: {formatExpirationDate(paste.expires_at)}
                             </span>
